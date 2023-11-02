@@ -7,7 +7,7 @@ import {
   Inject,
   UseGuards,
 } from "@nestjs/common";
-import { UserModuleService } from "../services/users.service";
+import { UserService } from "../services/users.service";
 import { User as UserDTO } from "../dtos/user.type";
 import {
   AUTHOR_ROLE,
@@ -27,7 +27,7 @@ import { configService } from "src/configs/config.service";
 @Controller("users")
 export class UserController {
   constructor(
-    private readonly userService: UserModuleService,
+    private readonly userService: UserService,
     private readonly authService: AuthService
   ) {}
 

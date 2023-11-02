@@ -1,0 +1,3 @@
+export const { CHAT_SERVICE_NAME } = {
+  CHAT_SERVICE_NAME: "CHAT_SERVICE",
+};

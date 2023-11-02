@@ -6,7 +6,7 @@ import { Repository } from "typeorm";
 import { Strategy, VerifyCallback } from "passport-google-oauth2";
 import { configService } from "src/configs/config.service";
 import { mapEnvVariables } from "configs/local";
-import { UserModuleService } from "../users.service";
+import { UserService } from "../users.service";
 import { ExtractJwt } from "passport-jwt";
 
 export type JwtPayload = {
@@ -50,7 +50,7 @@ export class JWTAuthStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(
     @Inject(mapEnvVariables().database)
     private configService: ConfigType<typeof mapEnvVariables>,
-    private readonly userService: UserModuleService
+    private readonly userService: UserService
   ) {
     const extractJwtFromCookie = (req) => {
       let token = null;

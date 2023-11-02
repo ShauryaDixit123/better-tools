@@ -6,17 +6,8 @@ import {
   ExecutionContext,
 } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { ExtractJwt } from "passport-jwt";
-import { AuthService } from "./auth.service";
 import { JwtService } from "@nestjs/jwt";
 import { configService } from "src/configs/config.service";
-import { UserModuleService } from "../users.service";
-import {
-  AUTHOR_ROLE,
-  INVALID_TOKEN,
-  TOKEN_NOT_FOUND,
-} from "../../constants/user.constant";
-import { ServerError } from "src/common/exceptions/error";
 
 @Injectable()
 export class GoogleAuthGaurd extends AuthGuard("google") {}
