@@ -7,6 +7,7 @@ import {
 import { GoogleStrategy } from "./modules/gateway/services/auth/local.strategy";
 import { AuthService } from "./modules/gateway/services/auth/auth.service";
 import { GatewayModule } from "./modules/gateway/gateway.module";
+import { SocketModule } from "./modules/socket/socket.module";
 const InitializeEnv = ConfigModule.forRoot({
   isGlobal: true,
 });
@@ -17,6 +18,7 @@ const InitializeEnv = ConfigModule.forRoot({
     InitializePgdbConnection,
     InitializeLocalMediaConfig,
     GatewayModule,
+    SocketModule,
   ],
   providers: [],
 })

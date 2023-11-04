@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { UserService } from "../services/users.service";
-import { User as UserDTO } from "../dtos/user.type";
+import { User as UserDTO } from "../dtos/user.dto";
 import {
   AUTHOR_ROLE,
   READER_ROLE,
@@ -38,10 +38,14 @@ export class UserController {
       configService.getValue("API_KEY_HASH_SECRET")
     );
     const password = await bcrypt.hash(user.password, 5);
-    const res = await this.userService.addUser({ ...user, password, apiKey });
-    return {
-      apiKey: res.apiKey,
-      id: res.id,
-    };
+    try {
+      const res = await this.userService.addUser({ ...user, password, apiKey });
+      return {
+        apiKey: res.apiKey,
+        id: res.id,
+      };
+    } catch (e) {
+      throw new ServerError(e.message);
+    }
   }
 }

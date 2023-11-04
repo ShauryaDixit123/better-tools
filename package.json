@@ -29,10 +29,13 @@
     "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.1.1",
+    "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^10.2.6",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/platform-socket.io": "^10.2.8",
     "@nestjs/typeorm": "^10.0.0",
+    "@nestjs/websockets": "^10.2.8",
     "aws-sdk": "^2.1469.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
@@ -46,6 +49,7 @@
     "postgres": "^3.3.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "socket.io": "^4.7.2",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {

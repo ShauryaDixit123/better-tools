@@ -13,6 +13,7 @@ import { ChatController } from "./controllers/chat.controller";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { ChatModule, registerChatProivder } from "../chat/chat.module";
 import { CHAT_SERVICE_NAME } from "src/common/constants/service";
+import { SocketModule } from "../socket/socket.module";
 
 const registerJWTModule = JwtModule.register({
   global: true,
@@ -32,6 +33,7 @@ const registerMicroServices = ClientsModule.register([
   providers: [UserService, AuthService, GoogleStrategy, registerChatProivder],
   imports: [
     PassportModule,
+    SocketModule,
     userRepoProviders,
     registerJWTModule,
     registerMicroServices,
