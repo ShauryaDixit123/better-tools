@@ -12,12 +12,17 @@ import { SocketService } from "./socket.service";
 import { CreateSocketDto } from "./dto/create-socket.dto";
 import { UpdateSocketDto } from "./dto/update-socket.dto";
 import { Server, Socket } from "socket.io";
+import { UseGuards } from "@nestjs/common";
+import { SocketGuard } from "./socket.guard";
+import { socketMiddlewareAuth } from "./socket.mw";
 
 @WebSocketGateway({
+  namespace: "socket",
   cors: {
     origin: "*",
   },
 })
+@UseGuards(SocketGuard)
 export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -25,10 +30,10 @@ export class SocketGateway
   // server: Socket;
   constructor(private readonly socketService: SocketService) {}
   handleConnection(client: Socket) {
-    // this.server = client;
     client.emit("connection", "ok");
   }
-  afterInit() {
+  afterInit(client: Socket) {
+    client.use(socketMiddlewareAuth());
     console.log("initialized!");
   }
   handleDisconnect(client: Socket) {
@@ -54,7 +59,9 @@ export class SocketGateway
   findAll() {
     return this.socketService.findAll();
   }
-
+  sendMessage() {
+    this.server.emit("hey", "ooooollllaalala!");
+  }
   @SubscribeMessage("findOneSocket")
   findOne(@MessageBody() id: number) {
     return this.socketService.findOne(id);
