@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { ServerError } from "src/common/exceptions/error";
 import { SocketGuard } from "./socket.guard";
+import { UnauthorizedException } from "@nestjs/common";
 
 export type SocketIOMiddleware = {
   client: Socket;
@@ -14,7 +15,6 @@ export const socketMiddlewareAuth = () => {
       next();
     } catch (e) {
       next(e);
-      throw new ServerError(e.message);
     }
   };
 };

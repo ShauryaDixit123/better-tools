@@ -3,9 +3,11 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { Socket } from "socket.io";
+import { ServerError } from "src/common/exceptions/error";
 
 @Injectable()
 export class SocketGuard implements CanActivate {
@@ -22,7 +24,7 @@ export class SocketGuard implements CanActivate {
   static validate(client: Socket) {
     const { authorization } = client.handshake.headers;
     Logger.log(authorization, "auth");
-    if (!authorization) throw new Error("Unauthorized");
+    if (!authorization) throw new UnauthorizedException("Unauthorized");
     return true;
   }
 }

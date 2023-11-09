@@ -15,8 +15,9 @@ import { Server, Socket } from "socket.io";
 import { UseGuards } from "@nestjs/common";
 import { SocketGuard } from "./socket.guard";
 import { socketMiddlewareAuth } from "./socket.mw";
+import { configService } from "src/configs/config.service";
 
-@WebSocketGateway({
+@WebSocketGateway(Number(configService.getValue("SOCKET_SERVICE_PORT")), {
   namespace: "socket",
   cors: {
     origin: "*",
@@ -27,7 +28,6 @@ export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: Server;
-  // server: Socket;
   constructor(private readonly socketService: SocketService) {}
   handleConnection(client: Socket) {
     client.emit("connection", "ok");
@@ -41,6 +41,10 @@ export class SocketGateway
     return "ok";
   }
 
+  createRoomForService(uid: string, client: Socket) {
+    client.join(uid);
+  }
+
   listenForMessages() {
     this.server.on("connection", (ws) => {
       ws.on("message", (e) => {
@@ -49,10 +53,28 @@ export class SocketGateway
     });
     console.log("message received");
   }
-  @SubscribeMessage("createSocket")
-  create(client: Socket, @MessageBody() data: any) {
-    console.log(client.data, "here!");
-    return this.socketService.create(data);
+  @SubscribeMessage("joinRoom")
+  joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { id: string[] }
+  ) {
+    console.log(typeof body);
+    if (body.id) {
+      client.join(body.id);
+      return "OK";
+    }
+    this.createRoomForService("CHAT_ROOM_UID", client);
+    return "OK!!";
+  }
+
+  @SubscribeMessage("emitToRoom")
+  emitToRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { id: string[]; event: string; data: any }
+  ) {
+    console.log(body.id, body.data, body.event);
+    client.to(body.id).emit(body.event, body.data);
+    return "OK";
   }
 
   @SubscribeMessage("findAllSocket")
