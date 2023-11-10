@@ -11,7 +11,7 @@ import { ConfigService } from "@nestjs/config";
 import { GoogleStrategy } from "./services/auth/local.strategy";
 import { ChatController } from "./controllers/chat.controller";
 import { ClientsModule, Transport } from "@nestjs/microservices";
-import { ChatModule, registerChatProivder } from "../chat/chat.module";
+import { registerChatProivder } from "../chat/chat.module";
 import { CHAT_SERVICE_NAME } from "src/common/constants/service";
 import { SocketModule } from "../socket/socket.module";
 
@@ -30,7 +30,13 @@ const registerMicroServices = ClientsModule.register([
 
 @Module({
   controllers: [UserController, AuthController, ChatController],
-  providers: [UserService, AuthService, GoogleStrategy, registerChatProivder],
+  providers: [
+    UserController,
+    UserService,
+    AuthService,
+    GoogleStrategy,
+    registerChatProivder,
+  ],
   imports: [
     PassportModule,
     SocketModule,
@@ -39,7 +45,7 @@ const registerMicroServices = ClientsModule.register([
     registerMicroServices,
     registerPassportModule,
   ],
-  exports: [PassportModule, AuthService, UserService],
+  exports: [PassportModule, AuthService, UserController, UserService],
 })
 @Global()
 @Module({

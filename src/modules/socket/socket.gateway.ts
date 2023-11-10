@@ -41,8 +41,9 @@ export class SocketGateway
     return "ok";
   }
 
-  createRoomForService(uid: string, client: Socket) {
-    client.join(uid);
+  createRoomForService(uid: string[], callBack?: () => void) {
+    this.server.socketsJoin(uid);
+    return callBack ? callBack() : null;
   }
 
   listenForMessages() {
@@ -53,49 +54,27 @@ export class SocketGateway
     });
     console.log("message received");
   }
+  getClient() {
+    return this.server;
+  }
   @SubscribeMessage("joinRoom")
-  joinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() body: { id: string[] }
-  ) {
-    console.log(typeof body);
-    if (body.id) {
-      client.join(body.id);
-      return "OK";
+  joinRoom(@MessageBody() body: { id: string[]; callBack?: () => void }) {
+    if (!body.id) {
+      body.id = ["CHAT_ROOM_UID"];
     }
-    this.createRoomForService("CHAT_ROOM_UID", client);
+    this.createRoomForService(body.id, body.callBack);
     return "OK!!";
   }
-
   @SubscribeMessage("emitToRoom")
-  emitToRoom(
-    @ConnectedSocket() client: Socket,
+  async emitToRoom(
     @MessageBody() body: { id: string[]; event: string; data: any }
   ) {
     console.log(body.id, body.data, body.event);
-    client.to(body.id).emit(body.event, body.data);
+    this.server.to(body.id).emit(body.event, body.data);
     return "OK";
   }
 
-  @SubscribeMessage("findAllSocket")
-  findAll() {
-    return this.socketService.findAll();
-  }
   sendMessage() {
     this.server.emit("hey", "ooooollllaalala!");
-  }
-  @SubscribeMessage("findOneSocket")
-  findOne(@MessageBody() id: number) {
-    return this.socketService.findOne(id);
-  }
-
-  @SubscribeMessage("updateSocket")
-  update(@MessageBody() updateSocketDto: UpdateSocketDto) {
-    return this.socketService.update(updateSocketDto.id, updateSocketDto);
-  }
-
-  @SubscribeMessage("removeSocket")
-  remove(@MessageBody() id: number) {
-    return this.socketService.remove(id);
   }
 }

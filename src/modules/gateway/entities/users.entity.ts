@@ -23,7 +23,7 @@ export class User {
   apiKey: string;
   @Column({
     nullable: false,
-    unique: true,
+    // unique: true,
   })
   email: string;
   @Column({
