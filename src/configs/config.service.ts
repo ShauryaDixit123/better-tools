@@ -1,7 +1,7 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+require("dotenv").config();
 
 class ConfigService {
   constructor(private env: { [k: string]: string | undefined }) {}
@@ -12,7 +12,7 @@ class ConfigService {
       throw new Error(`config error - missing env.${key}`);
     }
 
-    return value || '';
+    return value || "";
   }
 
   public ensureValues(keys: string[]) {
@@ -21,39 +21,39 @@ class ConfigService {
   }
 
   public getPort() {
-    return this.getValue('PGDB_PORT', true);
+    return this.getValue("PGDB_PORT", true);
   }
 
   public isProduction() {
-    const mode = this.getValue('MODE', false);
-    return mode != 'DEV';
+    const mode = this.getValue("MODE", false);
+    return mode != "DEV";
   }
   public googleAuthKey() {
-    return this.getValue('GOOGLE_CLIENT_ID', true);
+    return this.getValue("GOOGLE_CLIENT_ID", true);
   }
 
   public initializePgdbConfig(): TypeOrmModuleOptions {
     return {
-      type: 'postgres',
-      host: this.getValue('PGDB_HOST'),
+      type: "postgres",
+      host: this.getValue("PGDB_HOST"),
       port: Number(this.getPort()),
-      username: this.getValue('PGDB_USER'),
-      password: this.getValue('PGDB_PASSWORD'),
-      database: this.getValue('PGDB_DATABASE'),
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      username: this.getValue("PGDB_USER"),
+      password: this.getValue("PGDB_PASSWORD"),
+      database: this.getValue("PGDB_DATABASE"),
+      entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
-      migrationsTableName: 'migration',
-      migrations: ['migration/*.ts'],
+      migrationsTableName: "migration",
+      migrations: ["migration/*.ts"],
     };
   }
 }
 
 const configService = new ConfigService(process.env).ensureValues([
-  'PGDB_HOST',
-  'PGDB_PORT',
-  'PGDB_USER',
-  'PGDB_PASSWORD',
-  'PGDB_DATABASE',
+  "PGDB_HOST",
+  "PGDB_PORT",
+  "PGDB_USER",
+  "PGDB_PASSWORD",
+  "PGDB_DATABASE",
 ]);
 
 export { configService };

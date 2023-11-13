@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  api:
+    image: better-tools-api:latest
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+      NODE_ENV: development
+      PORT: 3010
+    ports:
+      - "8082:3010"
+      - "8083:81"
+  postgres:
+    image: postgres:13.1-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=better-tools

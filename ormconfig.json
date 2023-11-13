@@ -1,7 +1,7 @@
 {
   "type": "postgres",
-  "host": "localhost",
-  "port": 55003,
+  "host": "postgres",
+  "port": 5432,
   "username": "postgres",
   "password": "postgrespw",
   "database": "better-tools",

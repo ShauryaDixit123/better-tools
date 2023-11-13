@@ -43,7 +43,8 @@ export class SocketGateway
 
   createRoomForService(uid: string[], callBack?: () => void) {
     this.server.socketsJoin(uid);
-    return callBack ? callBack() : null;
+    callBack ? callBack() : null;
+    return;
   }
 
   listenForMessages() {
@@ -62,6 +63,7 @@ export class SocketGateway
     if (!body.id) {
       body.id = ["CHAT_ROOM_UID"];
     }
+    console.log(body.id);
     this.createRoomForService(body.id, body.callBack);
     return "OK!!";
   }
