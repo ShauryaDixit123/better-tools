@@ -22,10 +22,16 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 
-# use following commands to build docker img and use spinning up containers
+```
+
+## Docker build and run
+
+```bash
+# use following commands to build docker img and spinning up containers
 
 $ docker build -t better-tools-api:latest .
 $ docker-compose up
+
 ```
 
 - Twitter - [@nestframework](https://twitter.com/nestframework)
