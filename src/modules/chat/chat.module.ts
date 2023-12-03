@@ -4,8 +4,10 @@ import { ChatController } from "./chat.controller";
 import { ClientProxyFactory, Transport } from "@nestjs/microservices";
 import { ConfigService } from "@nestjs/config";
 import { CHAT_SERVICE_NAME } from "src/common/constants/service";
+import { chatRepoProviders } from "./chat.provider";
+import { InitializeEnv, InitializePgdbConnection } from "configs/local";
 
-export const registerChatProivder = {
+export const registerChatProvider = {
   provide: CHAT_SERVICE_NAME,
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
@@ -20,7 +22,9 @@ export const registerChatProivder = {
 };
 
 @Module({
-  providers: [ChatService],
+  providers: [ChatService, registerChatProvider],
+  imports: [InitializeEnv, InitializePgdbConnection, chatRepoProviders],
   controllers: [ChatController],
+  exports: [ChatService],
 })
 export class ChatModule {}

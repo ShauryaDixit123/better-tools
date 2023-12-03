@@ -2,12 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
 @Entity()
 export class ContentType {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: string;
   @Column()
   name: string;

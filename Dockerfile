@@ -5,4 +5,4 @@ RUN npm install
 COPY . .
 RUN npm run build
 CMD [ "node", "dist/src/main.js" ]
-EXPOSE 3010 81 
+EXPOSE 3010 82

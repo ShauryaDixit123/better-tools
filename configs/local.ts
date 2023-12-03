@@ -1,8 +1,13 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { Transport } from "@nestjs/microservices";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MinioModule } from "nestjs-minio-client";
-import { configService as configModuleService } from "src/configs/config.service";
+import { CHAT_SERVICE_NAME } from "src/common/constants/service";
+import {
+  configService as configModuleService,
+  configService,
+} from "src/configs/config.service";
 
 export const InitializePgdbConnection = TypeOrmModule.forRoot(
   configModuleService.initializePgdbConfig()
@@ -40,7 +45,18 @@ export const InitializeLocalMediaConfig = MinioModule.registerAsync({
     secretKey: configModuleService.getValue("AWS_ACCESS_SECRET_KEY"),
   }),
 });
+export const InitializeEnv = ConfigModule.forRoot({
+  isGlobal: true,
+});
 
+export const InitializeChatMicroserviceConfig = {
+  name: CHAT_SERVICE_NAME,
+  transport: Transport.TCP,
+  options: {
+    host: configService.getValue("CHAT_MICROSERVICE_HOST"),
+    port: Number(configService.getValue("CHAT_MICROSERVICE_PORT")),
+  },
+};
 @Module({
   exports: [InitializePgdbConnection, mapEnvVariables],
 })

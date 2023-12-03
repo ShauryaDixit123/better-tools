@@ -1,5 +1,11 @@
 version: "3.8"
 services:
+  # lb:
+  #   image: haproxy
+  #   ports:
+  #     - "5555:5555"
+  #   volumes:
+  #     - ./configs/haproxy:/usr/local/etc/haproxy
   api:
     image: better-tools-api:latest
     build:
@@ -13,7 +19,21 @@ services:
       PORT: 3010
     ports:
       - "8082:3010"
-      - "8083:81"
+      - "8083:82"
+  api_test:
+    image: better-tools-api:latest
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+      NODE_ENV: development
+      PORT: 3010
+    ports:
+      - "8084:3010"
+      - "8085:82"
   postgres:
     image: postgres:13.1-alpine
     ports:

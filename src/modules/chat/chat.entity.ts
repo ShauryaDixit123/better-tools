@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { ServiceUser, User } from "../gateway/entities/users.entity";
 import { ContentType } from "src/common/entities/type.entity";
@@ -15,7 +17,9 @@ export class ChatRoom {
   id: string;
   @Column()
   name: string;
-  @Column()
+  @Column({
+    default: null,
+  })
   description: string;
   @Column({
     default: 1,
@@ -33,29 +37,30 @@ export class ChatRoom {
   @CreateDateColumn()
   modifiedAt: Date;
 }
-
+@Entity()
+@Index(["serviceUser", "chatRoom"], { unique: true })
 export class ServiceUserChatRoom {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({
     default: 1,
   })
-  isActive: number;
+  isActive?: number;
 
   @ManyToOne(() => ServiceUser, (su) => su.id)
-  serviceUser: string;
+  serviceUser: ServiceUser;
   @ManyToOne(() => ChatRoom, (cr) => cr.id)
-  chatRoom: string;
+  chatRoom: ChatRoom;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
   @CreateDateColumn()
-  modifiedAt: Date;
+  modifiedAt?: Date;
 }
-
+@Entity()
 export class ChatEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
   @Column()
   message: string;
   @Column()
@@ -75,7 +80,7 @@ export class ChatEntity {
   @CreateDateColumn()
   modifiedAt: Date;
 }
-
+@Entity()
 export class ChatHeirarchy {
   @PrimaryGeneratedColumn()
   id: number;

@@ -1,7 +1,11 @@
+import { ChatRoom, ServiceUserChatRoom } from "src/modules/chat/chat.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -23,13 +27,34 @@ export class User {
   apiKey: string;
   @Column({
     nullable: false,
-    // unique: true,
   })
   email: string;
   @Column({
     nullable: false,
   })
   password: string;
+  @CreateDateColumn()
+  createdAt: Date;
+  @CreateDateColumn()
+  modifiedAt: Date;
+}
+
+@Entity()
+@Index(["uniqueId", "parentUser"], { unique: true })
+export class ServiceUser {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+  @Column({
+    nullable: false,
+  })
+  uniqueId: string;
+  @Column({
+    default: 1,
+  })
+  isActive: number;
+  @ManyToOne(() => User, (user) => user.id)
+  parentUser: string;
+
   @CreateDateColumn()
   createdAt: Date;
   @CreateDateColumn()

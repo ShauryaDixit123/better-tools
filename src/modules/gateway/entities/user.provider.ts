@@ -1,4 +1,4 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./users.entity";
+import { ServiceUser, User } from "./users.entity";
 
-export const userRepoProviders = TypeOrmModule.forFeature([User]);
+export const userRepoProviders = TypeOrmModule.forFeature([User, ServiceUser]);

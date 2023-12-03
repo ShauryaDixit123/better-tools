@@ -3,13 +3,15 @@ import { Repository } from "typeorm";
 
 import { User as UserDTO } from "../dtos/user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../entities/users.entity";
+import { ServiceUser, User } from "../entities/users.entity";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(ServiceUser)
+    private readonly serviceUserRepository: Repository<ServiceUser>
   ) {}
   async addUser(user: UserDTO): Promise<User> {
     return await this.userRepository.save(user);
@@ -23,6 +25,12 @@ export class UserService {
     ))
       ? true
       : false;
+  }
+  async createServiceUser(user: {
+    uniqueId: string;
+    parentUser: string;
+  }): Promise<string> {
+    return (await this.serviceUserRepository.save(user)).id;
   }
 }
 
