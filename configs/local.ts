@@ -2,15 +2,12 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { Transport } from "@nestjs/microservices";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { configService } from "apps/configs/config.service";
+import { CHAT_SERVICE_NAME } from "common/constants/service";
 import { MinioModule } from "nestjs-minio-client";
-import { CHAT_SERVICE_NAME } from "src/common/constants/service";
-import {
-  configService as configModuleService,
-  configService,
-} from "src/configs/config.service";
 
 export const InitializePgdbConnection = TypeOrmModule.forRoot(
-  configModuleService.initializePgdbConfig()
+  configService.initializePgdbConfig()
 );
 
 console.log(process.env.PGDB_PORT, process.env.PGDB_HOST);
@@ -38,11 +35,11 @@ export const mapEnvVariables = () => ({
 export const InitializeLocalMediaConfig = MinioModule.registerAsync({
   imports: [ConfigModule],
   useFactory: () => ({
-    endPoint: configModuleService.getValue("AWS_S3_ENDPOINT"),
-    port: parseInt(configModuleService.getValue("AWS_S3_PORT"), 10),
-    useSSL: configModuleService.getValue("AWS_S3_USE_SSL") === "true",
-    accessKey: configModuleService.getValue("AWS_ACCESS_KEY"),
-    secretKey: configModuleService.getValue("AWS_ACCESS_SECRET_KEY"),
+    endPoint: configService.getValue("AWS_S3_ENDPOINT"),
+    port: parseInt(configService.getValue("AWS_S3_PORT"), 10),
+    useSSL: configService.getValue("AWS_S3_USE_SSL") === "true",
+    accessKey: configService.getValue("AWS_ACCESS_KEY"),
+    secretKey: configService.getValue("AWS_ACCESS_SECRET_KEY"),
   }),
 });
 export const InitializeEnv = ConfigModule.forRoot({

@@ -1,6 +1,5 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { InitializePgdbConnection } from './local';
-import { configService } from 'src/configs/config.service';
+import { DataSource, DataSourceOptions } from "typeorm";
+import { InitializePgdbConnection } from "./local";
 
 // const initOrmConfig = configService.initializePgdbConfig();
 // export default new DataSource(initOrmConfig);
