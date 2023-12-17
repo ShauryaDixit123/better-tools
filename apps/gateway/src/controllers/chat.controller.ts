@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Inject,
   Logger,
+  OnModuleInit,
   Param,
   Post,
 } from "@nestjs/common";
@@ -38,16 +39,13 @@ export class ChatController {
   async onApplicationBootstrap() {
     await this.chatServiceClient.connect();
   }
+
   @Get("/ping")
   ping() {
     console.log("here");
     return this.chatServiceClient.send({ cmd: "ping" }, {});
   }
-  @Get("/ping1")
-  pinghere() {
-    console.log("here");
-    return "pong";
-  }
+
   @Get("/try")
   trysocket() {
     this.wsGateway.sendMessage();
@@ -70,21 +68,20 @@ export class ChatController {
       this.wsGateway.joinRoom({
         id: body.id,
       });
-      const chats = await this.chatServiceClient.emit(
-        { cmd: "joinRoom" },
-        body
-      );
-
-      await console.log(chats, "cahashas");
-      await this.wsGateway.emitToRoom({
-        id: [...body.id],
-        event: "hello",
-        data: chats,
-      });
-      return {
-        status: HttpStatus.OK,
-        data: chats,
-      };
+      this.chatServiceClient
+        .send({ cmd: "joinRoom" }, body)
+        .subscribe((res) => {
+          this.wsGateway.emitToRoom({
+            id: [...body.id],
+            event: "hello",
+            data: res,
+          });
+          console.log(res, "res");
+          return {
+            status: HttpStatus.OK,
+            data: res.data,
+          };
+        });
     } catch (e) {
       throw new ServerError(e);
     }
@@ -92,19 +89,6 @@ export class ChatController {
   @Post("/emitMessage/:id")
   async emitToRoom(@Param() params: { id: string }, @Body() body: ChatEntityI) {
     this.chatServiceClient.emit({ cmd: "emitMessage" }, body);
-    this.wsGateway.emitToRoom({
-      id: [params.id],
-      event: "hello",
-      data: body.message,
-    });
-    return HttpStatus.OK;
-  }
-  @Post("/emmitToRoomms/:id")
-  async emitToRoomMS(
-    @Param() params: { id: string },
-    @Body() body: ChatEntityI
-  ) {
-    this.chatServiceClient.emit({ cmd: "createChatRoom" }, { ...body });
     this.wsGateway.emitToRoom({
       id: [params.id],
       event: "hello",

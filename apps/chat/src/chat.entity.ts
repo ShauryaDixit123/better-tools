@@ -64,7 +64,9 @@ export class ChatEntity {
   id: string;
   @Column()
   message: string;
-  @Column()
+  @Column({
+    default: 1,
+  })
   isActive: number;
   @Column()
   s3Path: string;
@@ -88,7 +90,9 @@ export class ChatHeirarchy {
 
   @ManyToOne(() => ChatEntity, (ce) => ce.id)
   chatEntity: string;
-  @ManyToOne(() => ChatEntity, (ce) => ce.id)
+  @ManyToOne(() => ChatHeirarchy, (ce) => ce.id, {
+    nullable: true,
+  })
   parent: string;
 
   @CreateDateColumn()

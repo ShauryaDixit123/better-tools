@@ -36,6 +36,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/socket/tsconfig.app.json"
       }
+    },
+    "notif": {
+      "type": "application",
+      "root": "apps/notif",
+      "entryFile": "main",
+      "sourceRoot": "apps/notif/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notif/tsconfig.app.json"
+      }
     }
   }
 }

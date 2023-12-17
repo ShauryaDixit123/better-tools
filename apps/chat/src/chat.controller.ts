@@ -80,7 +80,16 @@ export class ChatController {
   }
   @MessagePattern({ cmd: "emitMessage" })
   async emitMessage(body: ChatEntityI) {
-    const chatEntity = await this.chatService.addChatEnitity(body);
+    const contentType = await this.chatService.addContentType({
+      id: `${body.type}."TEXT"`,
+      name: body.type,
+      type: "TEXT",
+    });
+    const chatEntity = await this.chatService.addChatEnitity({
+      ...body,
+      type: contentType.id,
+    });
+    console.log(chatEntity, "chatEntity");
     const chatHeirarchy = await this.chatService.addChatHeirarchy({
       chatEntity: chatEntity.id,
       parent: body.parent,

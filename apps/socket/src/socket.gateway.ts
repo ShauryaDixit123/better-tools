@@ -60,6 +60,7 @@ export class SocketGateway
   }
   @SubscribeMessage("joinRoom")
   joinRoom(@MessageBody() body: { id: string[]; callBack?: () => void }) {
+    console.log("here");
     if (!body.id) {
       body.id = ["CHAT_ROOM_UID"];
     }

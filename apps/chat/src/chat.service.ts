@@ -74,7 +74,7 @@ export class ChatService {
       .select("scr.chatRoomId", "chatRoom")
       .groupBy("scr.chatRoomId")
       .where(`scr.serviceUserId IN (:...ids)`, { ids })
-      .having(`COUNT(scr.serviceUserId) = ${ids.length}`);
+      .having(`COUNT(DISTINCT scr.serviceUserId) = ${ids.length}`);
     // .having(`COUNT(*) = ${ids.length}`);
     console.log(query.getSql());
     try {
