@@ -12,19 +12,17 @@ import { ChatRoom, ServiceUserChatRoom } from "./chat.entity";
 @Controller()
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
-  @MessagePattern({ cmd: "ping" })
+  @MessagePattern("ping")
   pong(): string {
+    console.log("here!");
     return "pong";
   }
-  @MessagePattern({ cmd: "createChatRoom" })
+  @MessagePattern("createChatRoom")
   async createChatRoom(body: CreateChatRoomI) {
     return await this.chatService.createChatRoom(body);
   }
-  @MessagePattern({ cmd: "addUsersToChatRoom" })
-  async addUserToChatRoom(body: {
-    chatRoom: string;
-    serviceUser: string[];
-  }): Promise<Number> {
+  @MessagePattern("addUsersToChatRoom")
+  async addUserToChatRoom(body: { chatRoom: string; serviceUser: string[] }) {
     const room = await this.chatService.getChatRoomById(body.chatRoom);
     const res = body.serviceUser.map(async (su) => {
       const serviceUserDetails = await this.chatService.getServiceUserById(su);
@@ -36,7 +34,7 @@ export class ChatController {
     // await this.chatService.addUsersToChatRoom(res);
     return HttpStatus.OK;
   }
-  @MessagePattern({ cmd: "joinRoom" })
+  @MessagePattern("joinRoom")
   async joinRoom(body: JoinRoomI) {
     console.log("here!");
     const chats: JoinRoomResponseI = {
@@ -78,7 +76,7 @@ export class ChatController {
       Logger.log(e);
     }
   }
-  @MessagePattern({ cmd: "emitMessage" })
+  @MessagePattern("emitMessage")
   async emitMessage(body: ChatEntityI) {
     const contentType = await this.chatService.addContentType({
       id: `${body.type}."TEXT"`,
@@ -97,17 +95,3 @@ export class ChatController {
     return chatHeirarchy;
   }
 }
-
-// .createQueryBuilder("scr")
-//     .select("scr.chatRoomId", "chatRoom")
-//     .addSelect(
-//       "ARRAY_AGG(scr.serviceUserId ORDER BY scr.serviceUserId)",
-//       "users"
-//     )
-//     .groupBy("scr.chatRoomId")
-//     .having(
-//       "ARRAY_AGG(scr.serviceUserId ORDER BY scr.serviceUserId) @> CAST(:ids AS uuid[])",
-//       {
-//         ids,
-//       }
-//     );

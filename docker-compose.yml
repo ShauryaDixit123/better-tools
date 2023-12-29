@@ -6,39 +6,103 @@ services:
   #     - "5555:5555"
   #   volumes:
   #     - ./configs/haproxy:/usr/local/etc/haproxy
-  api:
-    image: better-tools-api:latest
-    build:
-      dockerfile: Dockerfile
-      context: .
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
-      NODE_ENV: development
-      PORT: 3010
-    ports:
-      - "8082:3010"
-      - "8083:82"
-  api_test:
-    image: better-tools-api:latest
-    build:
-      dockerfile: Dockerfile
-      context: .
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
-      NODE_ENV: development
-      PORT: 3010
-    ports:
-      - "8084:3010"
-      - "8085:82"
-  postgres:
-    image: postgres:13.1-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
-      - POSTGRES_DB=better-tools
+  version: "3.8"
+  services:
+    kafka:
+      image: confluentinc/cp-kafka:latest
+      depends_on:
+        - zookeeper
+      ports:
+        - "29092:29092"
+      environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+        KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:9092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:29092
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+        KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    zookeeper:
+      image: confluentinc/cp-zookeeper:latest
+      ports:
+        - "22181:2181"
+      environment:
+        ZOOKEEPER_CLIENT_PORT: 2181
+        ZOOKEEPER_TICK_TIME: 2000
+
+  # gateway:
+  #   image: gateway:version1
+  #   build:
+  #     dockerfile: ./apps/gateway/Dockerfile
+  #     context: .
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+  #     NODE_ENV: development
+  #     PORT: 3002
+  #   ports:
+  #     - "8082:3002"
+  # chat:
+  #   image: chat:version1
+  #   build:
+  #     dockerfile: ./apps/chat/Dockerfile
+  #     context: .
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+  #     NODE_ENV: development
+  #     PORT: 8877
+  #   ports:
+  #     - "8877:8877"
+  # notif:
+  #   image: notif:version1
+  #   build:
+  #     dockerfile: ./apps/notif/Dockerfile
+  #     context: .
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+  #     NODE_ENV: development
+  #     PORT: 8879
+  #   ports:
+  #     - "8879:8879"
+  # socket:
+  #   image: socket:version1
+  #   build:
+  #     dockerfile: ./apps/socket/Dockerfile
+  #     context: .
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres:postgrespw@postgres:5432/better-tools"
+  #     NODE_ENV: development
+  #     PORT: 88
+  #   ports:
+  #     - "8083:88"
+
+  # postgres:
+  #   image: postgres:13.1-alpine
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgrespw
+  #     - POSTGRES_DB=better-tools
+  # zookeeper:
+  #   image: "wurstmeister/zookeeper:latest"
+  #   ports:
+  #     - "2181:2181"
+  #   environment:
+  #     - ALLOW_ANONYMOUS_LOGIN=yes
+  # kafka:
+  #   image: "wurstmeister/kafka:latest"
+  #   ports:
+  #     - "9093:9093"
+  #   environment:
+  #     - KAFKA_BROKER_ID=1
+  #     - KAFKA_LISTENERS=PLAINTEXT://:9093
+  #     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9093
+  #     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #   depends_on:
+  #     - zookeeper

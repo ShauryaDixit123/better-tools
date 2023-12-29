@@ -9,7 +9,13 @@ import {
   Param,
   Post,
 } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import {
+  Client,
+  ClientKafka,
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserService } from "../services/users.service";
 import { UserController } from "./users.controller";
@@ -25,25 +31,36 @@ import {
   JoinRoomI,
 } from "apps/chat/src/chat.interface";
 import { ServerError } from "common/exceptions/error";
+import { InitializeChatMicroserviceConfig } from "configs/local";
 
 @Controller("chat")
-export class ChatController {
+export class ChatController implements OnModuleInit {
   constructor(
-    @Inject(CHAT_SERVICE_NAME)
-    private readonly chatServiceClient: ClientProxy,
+    // @Inject(CHAT_SERVICE_NAME)
+    // private readonly chatServiceClient: ClientKafka,
     @Inject(SocketGateway)
     private readonly wsGateway: SocketGateway,
     private readonly userController: UserController,
     private readonly chatService: ChatService
   ) {}
-  async onApplicationBootstrap() {
-    await this.chatServiceClient.connect();
+  @Client({
+    ...InitializeChatMicroserviceConfig,
+    transport: Transport.KAFKA,
+  })
+  chatServiceClient: ClientKafka;
+  async onModuleInit() {
+    console.log("here before connect!");
+    this.chatServiceClient.subscribeToResponseOf("ping");
+    this.chatServiceClient.connect();
   }
 
+  // async onApplicationBootstrap() {
+  //   await this.chatServiceClient.connect();
+  // }
   @Get("/ping")
   ping() {
     console.log("here");
-    return this.chatServiceClient.send({ cmd: "ping" }, {});
+    return this.chatServiceClient.send("ping", {});
   }
 
   @Get("/try")
@@ -68,27 +85,25 @@ export class ChatController {
       this.wsGateway.joinRoom({
         id: body.id,
       });
-      this.chatServiceClient
-        .send({ cmd: "joinRoom" }, body)
-        .subscribe((res) => {
-          this.wsGateway.emitToRoom({
-            id: [...body.id],
-            event: "hello",
-            data: res,
-          });
-          console.log(res, "res");
-          return {
-            status: HttpStatus.OK,
-            data: res.data,
-          };
+      this.chatServiceClient.send("joinRoom", body).subscribe((res) => {
+        this.wsGateway.emitToRoom({
+          id: [...body.id],
+          event: "hello",
+          data: res,
         });
+        console.log(res, "res");
+        return {
+          status: HttpStatus.OK,
+          data: res.data,
+        };
+      });
     } catch (e) {
       throw new ServerError(e);
     }
   }
   @Post("/emitMessage/:id")
   async emitToRoom(@Param() params: { id: string }, @Body() body: ChatEntityI) {
-    this.chatServiceClient.emit({ cmd: "emitMessage" }, body);
+    this.chatServiceClient.emit("emitMessage", body);
     this.wsGateway.emitToRoom({
       id: [params.id],
       event: "hello",

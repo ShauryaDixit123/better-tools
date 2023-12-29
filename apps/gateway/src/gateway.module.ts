@@ -29,7 +29,7 @@ const registerPassportModule = PassportModule.register({
   defaultStrategy: "google",
 });
 const registerMicroServices = ClientsModule.register([
-  { ...InitializeChatMicroserviceConfig, transport: Transport.TCP },
+  { ...InitializeChatMicroserviceConfig, transport: Transport.KAFKA },
 ]);
 
 @Module({

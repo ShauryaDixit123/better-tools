@@ -3,7 +3,10 @@ import { ConfigModule } from "@nestjs/config";
 import { Transport } from "@nestjs/microservices";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { configService } from "apps/configs/config.service";
-import { CHAT_SERVICE_NAME } from "common/constants/service";
+import {
+  CHAT_SERVICE_NAME,
+  NOTIF_SERVICE_NAME,
+} from "common/constants/service";
 import { MinioModule } from "nestjs-minio-client";
 
 export const InitializePgdbConnection = TypeOrmModule.forRoot(
@@ -48,12 +51,35 @@ export const InitializeEnv = ConfigModule.forRoot({
 
 export const InitializeChatMicroserviceConfig = {
   name: CHAT_SERVICE_NAME,
-  transport: Transport.TCP,
+  transport: Transport.KAFKA,
   options: {
-    host: configService.getValue("CHAT_MICROSERVICE_HOST"),
-    port: Number(configService.getValue("CHAT_MICROSERVICE_PORT")),
+    client: {
+      clientId: "tools-client",
+      brokers: [
+        `${configService.getValue(
+          "CHAT_MICROSERVICE_HOST"
+        )}:${configService.getValue("CHAT_CLIENT_KAFKA_BROKER_PORT")}`,
+      ],
+    },
+    consumer: {
+      groupId: "chat-consumer",
+    },
   },
 };
+// export const InitializeNotifMicroserviceConfig = {
+//   name: NOTIF_SERVICE_NAME,
+//   transport: Transport.TCP,
+//   options: {
+//     // host: configService.getValue("CHAT_MICROSERVICE_HOST"),
+//     // port: Number(configService.getValue("CHAT_MICROSERVICE_PORT")),
+//     client: {
+//       clientId: "tools-client",
+//     },
+//     consumer: {
+//       groupId: "notif-consumer",
+//     },
+//   },
+// };
 @Module({
   exports: [InitializePgdbConnection, mapEnvVariables],
 })
