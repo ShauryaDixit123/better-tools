@@ -54,7 +54,7 @@ export const InitializeChatMicroserviceConfig = {
   transport: Transport.KAFKA,
   options: {
     client: {
-      clientId: "tools-client",
+      clientId: "chat-tools-client",
       brokers: [
         `${configService.getValue(
           "CHAT_MICROSERVICE_HOST"
@@ -66,20 +66,23 @@ export const InitializeChatMicroserviceConfig = {
     },
   },
 };
-// export const InitializeNotifMicroserviceConfig = {
-//   name: NOTIF_SERVICE_NAME,
-//   transport: Transport.TCP,
-//   options: {
-//     // host: configService.getValue("CHAT_MICROSERVICE_HOST"),
-//     // port: Number(configService.getValue("CHAT_MICROSERVICE_PORT")),
-//     client: {
-//       clientId: "tools-client",
-//     },
-//     consumer: {
-//       groupId: "notif-consumer",
-//     },
-//   },
-// };
+export const InitializeNotifMicroserviceConfig = {
+  name: NOTIF_SERVICE_NAME,
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      clientId: "notif-tools-client",
+      brokers: [
+        `${configService.getValue(
+          "CHAT_MICROSERVICE_HOST"
+        )}:${configService.getValue("CHAT_CLIENT_KAFKA_BROKER_PORT")}`,
+      ],
+    },
+    consumer: {
+      groupId: "notif-consumer",
+    },
+  },
+};
 @Module({
   exports: [InitializePgdbConnection, mapEnvVariables],
 })

@@ -37,9 +37,6 @@ import { CHAT_SERVICE_NAME } from "common/constants/service";
     InitializePgdbConnection,
     ClientKafka,
     chatRepoProviders,
-    ClientsModule.register([
-      { ...InitializeChatMicroserviceConfig, transport: Transport.KAFKA },
-    ]),
   ],
   controllers: [ChatController],
   exports: [ChatService],

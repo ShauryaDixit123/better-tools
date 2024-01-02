@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { NotifService } from './notif.service';
+import { Controller, Get } from "@nestjs/common";
+import { NotifService } from "./notif.service";
+import { MessagePattern } from "@nestjs/microservices";
 
 @Controller()
 export class NotifController {
   constructor(private readonly notifService: NotifService) {}
 
-  @Get()
-  getHello(): string {
-    return this.notifService.getHello();
+  @MessagePattern("pong")
+  pong(): string {
+    console.log("here from notif!");
+    return "pong";
   }
 }

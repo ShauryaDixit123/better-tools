@@ -14,7 +14,6 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
   @MessagePattern("ping")
   pong(): string {
-    console.log("here!");
     return "pong";
   }
   @MessagePattern("createChatRoom")

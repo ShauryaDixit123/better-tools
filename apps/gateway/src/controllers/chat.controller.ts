@@ -36,8 +36,6 @@ import { InitializeChatMicroserviceConfig } from "configs/local";
 @Controller("chat")
 export class ChatController implements OnModuleInit {
   constructor(
-    // @Inject(CHAT_SERVICE_NAME)
-    // private readonly chatServiceClient: ClientKafka,
     @Inject(SocketGateway)
     private readonly wsGateway: SocketGateway,
     private readonly userController: UserController,
@@ -54,12 +52,8 @@ export class ChatController implements OnModuleInit {
     this.chatServiceClient.connect();
   }
 
-  // async onApplicationBootstrap() {
-  //   await this.chatServiceClient.connect();
-  // }
   @Get("/ping")
   ping() {
-    console.log("here");
     return this.chatServiceClient.send("ping", {});
   }
 
