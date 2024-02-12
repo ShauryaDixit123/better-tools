@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Logger } from "@nestjs/common";
+import { Controller, HttpStatus, Logger, OnModuleInit } from "@nestjs/common";
 import { EventPattern, MessagePattern } from "@nestjs/microservices";
 import { ChatService } from "./chat.service";
 import {
@@ -78,7 +78,7 @@ export class ChatController {
   @MessagePattern("emitMessage")
   async emitMessage(body: ChatEntityI) {
     const contentType = await this.chatService.addContentType({
-      id: `${body.type}."TEXT"`,
+      id: `${body.type}.TEXT`,
       name: body.type,
       type: "TEXT",
     });

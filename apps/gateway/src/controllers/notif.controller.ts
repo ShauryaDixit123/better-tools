@@ -8,12 +8,12 @@ export class NotifController implements OnModuleInit {
   @Client({ ...InitializeNotifMicroserviceConfig, transport: Transport.KAFKA })
   notifServiceClient: ClientKafka;
   onModuleInit() {
-    this.notifServiceClient.subscribeToResponseOf("pong");
     this.notifServiceClient.connect();
+    this.notifServiceClient.subscribeToResponseOf("ping");
   }
   @Get("/ping")
   ping() {
     console.log("here!");
-    return this.notifServiceClient.send("pong", {});
+    return this.notifServiceClient.send("ping", {});
   }
 }

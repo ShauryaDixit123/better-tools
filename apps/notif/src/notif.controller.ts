@@ -6,7 +6,7 @@ import { MessagePattern } from "@nestjs/microservices";
 export class NotifController {
   constructor(private readonly notifService: NotifService) {}
 
-  @MessagePattern("pong")
+  @MessagePattern("ping")
   pong(): string {
     console.log("here from notif!");
     return "pong";
